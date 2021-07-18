@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-
+const fileUpload = require('express-fileupload');
 // create express app
 const app = express();
 
@@ -9,6 +9,10 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 // parse application/json
 app.use(bodyParser.json())
+
+// default options
+app.use(fileUpload());
+
 
 // Configuring the database
 const dbConfig = require('./config/database.config.js');
@@ -26,6 +30,8 @@ mongoose.connect(dbConfig.url, {
     process.exit();
 });
 
+
+
 // define a simple route
 app.get('/', (req, res) => {
     res.json({"message": "Welcome to EasyNotes application. Take notes quickly. Organize and keep track of all your notes."});
@@ -37,3 +43,5 @@ require('./app/routes/note.routes.js')(app);
 app.listen(3000, () => {
     console.log("Server is listening on port 3000");
 });
+
+/*  */

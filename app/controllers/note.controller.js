@@ -1,18 +1,52 @@
 const Note = require('../models/note.model.js');
 
+
+exports.uploadFile = (req, res) => {
+	let sampleFile;
+	let uploadPath;
+
+	if (!req.files || Object.keys(req.files).length === 0) {
+		return res.status(400).send({
+            message: "Need to upload profile picture."
+        });
+	}
+
+	// The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+    const rndInt = Math.floor(Math.random() * 10000) + 1
+	sampleFile 	= req.files.sampleFile;
+	fileName 	= rndInt+sampleFile.name;
+	uploadPath = __dirname + '\\..\\..\\public\\images\\' + fileName;
+
+	// Use the mv() method to place the file somewhere on your server
+	sampleFile.mv(uploadPath, function(err) {
+        if (err){
+			console.log(err);
+			return res.status(500).send(err);
+		}
+		console.log('File uploaded successfully :) ');
+		//res.send('File uploaded successfully :) ');
+	});
+
+    console.log('++++++'+fileName+'+++++++');
+    return fileName;
+}
+
 // Create and Save a new Note
 exports.create = (req, res) => {
+    let fileName = this.uploadFile(req, res);
+
     // Validate request
     if(!req.body.content) {
         return res.status(400).send({
             message: "Note content can not be empty"
         });
     }
-
+    
     // Create a Note
     const note = new Note({
         title: req.body.title || "Untitled Note", 
-        content: req.body.content
+        content: req.body.content,
+        fileName: fileName
     });
 
     // Save Note in the database
